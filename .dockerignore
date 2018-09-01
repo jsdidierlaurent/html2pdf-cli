@@ -1,0 +1,6 @@
+.git
+.eslintignore
+.eslintrc
+.gitignore
+node_modules
+npm-debug.log
