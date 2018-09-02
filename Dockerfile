@@ -20,7 +20,8 @@ WORKDIR /usr/src/app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json yarn.lock ./
 
-RUN yarn install --production && yarn cache clean
+RUN yarn install --production --network-timeout 1000000 && \
+    yarn cache clean
 
 # Bundle app source
 COPY . .
