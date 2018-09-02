@@ -5,37 +5,30 @@ const puppeteer = require('puppeteer')
 
 // Define global command options
 program
-  .version('0.0.1', '-v, --version')
   .description(
     `CLI wrapper for using puppeteers to export html to pdf
-
-    For more information about puppeteer see : https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md`
+    For more information about puppeteer see : https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md
+    
+    Example : export --format A3 https://my.website.com /path/to/my/export.pdf`
   )
-
-// Define default result in case of wrong command
-program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '))
-  process.exit(1)
-})
-
-// Define main command
-program
-  .command('export <url> <path>')
-  .description(`Export website page to PDF.
-  Example : export --format A3 https://my.website.com /path/to/my/export.pdf`)
-  .option('-f, --format <string>',
-    `Paper format. If set, takes priority over width or height options. Defaults to 'A4'.`)
+  .usage('[options] <url> <path>')
+  .option('-f, --format <string>', `Paper format. If set, takes priority over width or height options. Defaults to 'A4'.`)
   .option('-w, --width <string>', `Paper width, accepts values labeled with units.`)
   .option('-h, --height <string>', `Paper height, accepts values labeled with units.`)
+  .option('-p, --page-ranges <string>', `Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.`)
+  .option('-m, --media <string>', `Changes the CSS media type of the page. Defaults to 'print'. Passing null disables media emulation.`)
   .option('--margin-top <string>', `Top margin, accepts values labeled with units. Defaults to 0`)
   .option('--margin-bottom <string>', `Bottom margin, accepts values labeled with units. Defaults to 0`)
   .option('--margin-left <string>', `Left margin, accepts values labeled with units. Defaults to 0`)
   .option('--margin-right <string>', `Right margin, accepts values labeled with units. Defaults to 0`)
-  .option('-p, --page-ranges <string>',
-    `Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.`)
-  .option('-m, --media <string>', `Changes the CSS media type of the page. Defaults to 'print'
-    The only allowed values are 'screen', 'print' and null. Passing null disables media emulation.`)
+  .version('0.0.1', '-v, --version')
   .action((url, path, options) => {
+    // Define default result in case of missing command
+    if (!url | !path | !options) {
+      program.help()
+      return
+    }
+
     options.format = options.format || 'A4'
     options.marginTop = options.marginTop || 0
     options.marginBottom = options.marginBottom || 0
@@ -45,13 +38,7 @@ program
 
     html2pdf(url, path, options)
   })
-
-program.parse(process.argv)
-
-// Define default result in case of missing command
-if (process.argv.length === 2) {
-  program.help()
-}
+  .parse(process.argv)
 
 /**
  * Transforme static HTML page to PDF

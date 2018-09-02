@@ -111,9 +111,6 @@
       - "1tbs"
       -
         allowSingleLine: true
-    max-len:
-      - 2
-      - 120
     consistent-this:
       - 2
       - "self"

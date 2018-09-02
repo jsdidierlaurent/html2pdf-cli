@@ -18,16 +18,15 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json yarn.lock ./
+COPY package*.json ./
 
-RUN yarn install --production --network-timeout 1000000 && \
-    yarn cache clean
+RUN npm install --production
 
 # Bundle app source
 COPY . .
 
 # Install html2pdf-cli
-RUN yarn link
+RUN npm link
 
 # Default volume and workdir for PDF
 VOLUME /dest
